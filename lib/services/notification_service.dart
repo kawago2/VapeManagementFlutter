@@ -62,7 +62,7 @@ class LocalNotificationService implements INotificationService {
       if (scheduledCottonTime.isAfter(DateTime.now())) {
         await _scheduleNotification(
           id: cottonNotificationId,
-          title: '⚠️ Waktunya Ganti Kapas!',
+          title: 'Waktunya Ganti Kapas',
           body:
               'Kapas ${setup.deviceName} sudah mencapai batas ${cotton.maxLifespanDays} hari. Ganti sekarang untuk cita rasa maksimal!',
           scheduledDate: scheduledCottonTime,
@@ -86,7 +86,7 @@ class LocalNotificationService implements INotificationService {
       if (scheduledCoilTime.isAfter(DateTime.now())) {
         await _scheduleNotification(
           id: coilNotificationId,
-          title: '⚡ Waktunya Ganti Koil!',
+          title: 'Waktunya Ganti Koil',
           body:
               'Koil ${setup.deviceName} sudah terpakai ${coil.maxLifespanDays} hari. Waspada dry-hit dan kerak karbon!',
           scheduledDate: scheduledCoilTime,

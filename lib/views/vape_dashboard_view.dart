@@ -10,6 +10,7 @@ import '../widgets/dashboard_filter_bar.dart';
 import '../widgets/edit_battery_sheet.dart';
 import '../widgets/edit_liquid_sheet.dart';
 import '../widgets/edit_tank_setup_sheet.dart';
+import '../widgets/modern_toast.dart';
 import '../widgets/quick_reset_dialog.dart';
 import '../widgets/section_header_view.dart';
 
@@ -177,22 +178,16 @@ class _VapeDashboardViewState extends State<VapeDashboardView> {
       await TursoSyncService.shared.syncTwoWay(widget.repository);
       await _loadAllData();
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('✅ Sinkronisasi Turso Cloud 2 arah berhasil!'),
-            backgroundColor: Color(0xFF10B981),
-            behavior: SnackBarBehavior.floating,
-          ),
+        ModernToast.showSuccess(
+          context,
+          'Sinkronisasi cloud 2 arah berhasil',
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('⚠️ Sinkronisasi gagal: $e'),
-            backgroundColor: const Color(0xFFEF4444),
-            behavior: SnackBarBehavior.floating,
-          ),
+        ModernToast.showError(
+          context,
+          'Sinkronisasi gagal: $e',
         );
       }
     }
