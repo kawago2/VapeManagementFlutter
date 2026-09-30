@@ -1,109 +1,97 @@
 # VapeCare
 
-Aplikasi manajemen dan perawatan perlengkapan vape personal berbasis **Flutter**. Dirancang dengan arsitektur bersih (**Clean Architecture & SOLID principles**), mendukung penyimpanan lokal (**Offline-first / SharedPreferences**) serta sinkronisasi cloud dengan **Turso Database (libSQL)**.
+Aplikasi manajemen dan pemeliharaan perangkat vape pribadi yang dibangun menggunakan Flutter. Mendukung penyimpanan data lokal serta sinkronisasi database cloud Turso (libSQL).
 
 ---
 
-## ✨ Fitur Utama
+## Fitur
 
-- **🔋 Manajemen Baterai**:
-  - Pelacakan siklus pengisian, status kesehatan baterai, dan pengurutan terorganisir.
-- **💧 Manajemen Liquid**:
-  - Monitoring sisa kapasitas, level nikotin, rasa, dan estimasi waktu habis.
-- **💨 Manajemen Setup Tank & Coil**:
-  - Rekam pemakaian coil/kapas, status usia pakai, dan riwayat pergantian.
-- **☁️ Sinkronisasi Turso Cloud (libSQL)**:
-  - Dukungan database cloud terenkripsi via REST API Turso.
-  - Opsi konfigurasi via environment file (`.env`) atau input langsung dari menu Cloud Sync di dalam aplikasi.
-  - Dukungan auto-push saat perubahan data dan manual pull data terbaru dari cloud.
-- **🔔 Notifikasi & Reminder**:
-  - Pengingat pemeliharaan setup atau rotasi baterai via `flutter_local_notifications`.
+- **Manajemen Baterai**: Pencatatan siklus isi ulang, indikator kesehatan baterai, dan pengurutan data otomatis.
+- **Manajemen Liquid**: Pemantauan sisa volume botol, kadar nikotin, dan riwayat rasa.
+- **Manajemen Tank & Coil**: Pelacakan masa pakai coil/kapas dan riwayat penggantian komponen.
+- **Sinkronisasi Turso Database**: Sinkronisasi data dua arah (push dan pull) melalui REST API Turso, mendukung konfigurasi via file `.env` maupun input melalui antarmuka aplikasi.
+- **Notifikasi**: Pengingat berkala untuk perawatan coil dan pergantian baterai.
 
 ---
 
-## 🛠️ Tech Stack & Architecture
+## Spesifikasi Teknis
 
-- **Framework**: [Flutter](https://flutter.dev) (Dart 3.x)
-- **Architecture**: Clean Architecture & SOLID Principles (Repository Pattern, ViewModels / State Separation)
-- **Local Storage**: `shared_preferences`
-- **Cloud Database**: [Turso (libSQL)](https://turso.tech/) via HTTP / REST API
-- **Styling & Icons**: Custom dark/modern aesthetic, Google Fonts, Cupertino Icons
-- **Notifications**: `flutter_local_notifications`
+- **Framework**: Flutter (Dart SDK ^3.10.4)
+- **State & Architecture**: Repository pattern dengan pemisahan business logic dan view.
+- **Penyimpanan Lokal**: SharedPreferences
+- **Database Cloud**: Turso / libSQL HTTP API
+- **Notifikasi**: flutter_local_notifications
 
 ---
 
-## 🚀 Persiapan & Instalasi
+## Instalasi dan Menjalankan Aplikasi
 
-### 1. Prasyarat
-- Flutter SDK (>= 3.10.4)
-- Android Studio / Xcode (jika build untuk iOS)
-- CocoaPods (untuk iOS)
+### 1. Dependensi
+Pastikan Flutter SDK telah terpasang di komputer Anda.
 
-### 2. Clone & Install Dependencies
 ```bash
-git clone https://github.com/username/VapeManagement.git
-cd VapeManagement
 flutter pub get
 ```
 
-### 3. Konfigurasi Environment (Turso Cloud DB)
-Salin template konfigurasi:
+### 2. Konfigurasi Environment (.env)
+Salin contoh konfigurasi env:
+
 ```bash
 cp .env.example .env
 ```
 
-Buka `.env` dan isi dengan kredensial Turso Database Anda:
+Sesuaikan nilai di dalam `.env`:
+
 ```env
-TURSO_DATABASE_URL=https://nama-db-anda.turso.io
-TURSO_AUTH_TOKEN=eyJh...token_anda
+TURSO_DATABASE_URL=https://<your-database-name>.turso.io
+TURSO_AUTH_TOKEN=<your-turso-auth-token>
 ```
 
-> **Catatan**: File `.env` bersifat privat dan sudah di-ignore di `.gitignore`. Anda juga dapat mengosongkannya dan mengatur token langsung dari menu **Cloud Database** di aplikasi.
+*Catatan: Konfigurasi token juga dapat diisi langsung di dalam menu pengaturan aplikasi jika tidak ingin menggunakan file `.env`.*
 
----
+### 3. Menjalankan Aplikasi
 
-## 📱 Menjalankan Aplikasi
-
-### Mode Debug (dengan konfigurasi `.env`)
+Menjalankan pada simulator/perangkat:
 ```bash
 flutter run --dart-define-from-file=.env
 ```
 
-### Build APK Release (Android)
+Build APK Android:
 ```bash
 flutter build apk --release --dart-define-from-file=.env
 ```
-File APK output berada di: `build/app/outputs/flutter-apk/app-release.apk`.
 
-### Build iOS Simulator
+Build iOS Simulator:
 ```bash
 flutter build ios --simulator --no-codesign --dart-define-from-file=.env
 ```
 
 ---
 
-## 📂 Struktur Proyek
+## Struktur Folder
 
 ```text
 lib/
-├── models/         # Entity data & serialization (Tank, Battery, Liquid)
-├── repositories/   # Data layer & abstraction (VapeRepository)
-├── screens/        # Screen level composables & routes
-├── services/       # Cloud sync (TursoClient), notifications & config
-├── theme/          # Custom theme tokens & visual styling
-├── views/          # UI tabs & page views
-└── widgets/        # Reusable component widgets & bottom sheets
+├── models/         # Entity data model
+├── repositories/   # Abstraksi dan implementasi data storage
+├── screens/        # Komponen layout layar
+├── services/       # Turso client, service notifikasi, dan config
+├── theme/          # Konfigurasi tema dan warna
+├── views/          # Tampilan per tab menu
+└── widgets/        # Komponen UI reusable dan dialog
 ```
 
 ---
 
-## 📝 Commit Convention
+## Format Pesan Commit
 
-Repositori ini mengikuti format commit:
+Format pesan git commit yang digunakan pada repositori ini:
+
 ```text
-[TYPE] (SCOPE) Pesan deskripsi commit
+[TYPE] (SCOPE) Deskripsi perubahan
 ```
+
 Contoh:
-- `[FEAT] (TURSO) Support .env for database credentials`
+- `[FEAT] (TURSO) Add support for env-based credentials`
 - `[FIX] (IOS) Update deployment target to 15.0`
-- `[CHORE] (DOCS) Update README with project details and build guides`
+- `[CHORE] (DOCS) Update README file`
