@@ -35,7 +35,16 @@ class TursoSyncService extends ChangeNotifier {
       throw Exception('Turso Database URL atau Auth Token belum dikonfigurasi');
     }
 
-    final sanitizedDbUrl = dbUrl.endsWith('/') ? dbUrl.substring(0, dbUrl.length - 1) : dbUrl;
+    String sanitizedDbUrl = dbUrl.trim();
+    if (sanitizedDbUrl.endsWith('/')) {
+      sanitizedDbUrl = sanitizedDbUrl.substring(0, sanitizedDbUrl.length - 1);
+    }
+    if (sanitizedDbUrl.startsWith('libsql://')) {
+      sanitizedDbUrl = sanitizedDbUrl.replaceFirst('libsql://', 'https://');
+    } else if (!sanitizedDbUrl.startsWith('http://') && !sanitizedDbUrl.startsWith('https://')) {
+      sanitizedDbUrl = 'https://$sanitizedDbUrl';
+    }
+
     final endpoint = '$sanitizedDbUrl/v2/pipeline';
     final requests = queries.map((q) {
       return {
