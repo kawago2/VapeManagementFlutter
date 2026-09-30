@@ -30,11 +30,13 @@ class TursoSyncService extends ChangeNotifier {
 
   Future<List<dynamic>> executeSQL(List<String> queries) async {
     final token = await TursoConfig.getAuthToken();
-    if (token.isEmpty) {
-      throw Exception('Turso Auth Token belum dikonfigurasi');
+    final dbUrl = await TursoConfig.getDatabaseUrl();
+    if (token.isEmpty || dbUrl.isEmpty) {
+      throw Exception('Turso Database URL atau Auth Token belum dikonfigurasi');
     }
 
-    final endpoint = '${TursoConfig.databaseUrl}/v2/pipeline';
+    final sanitizedDbUrl = dbUrl.endsWith('/') ? dbUrl.substring(0, dbUrl.length - 1) : dbUrl;
+    final endpoint = '$sanitizedDbUrl/v2/pipeline';
     final requests = queries.map((q) {
       return {
         'type': 'execute',

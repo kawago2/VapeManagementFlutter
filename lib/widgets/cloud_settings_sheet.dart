@@ -10,18 +10,21 @@ class CloudSettingsSheet extends StatefulWidget {
 }
 
 class _CloudSettingsSheetState extends State<CloudSettingsSheet> {
+  final TextEditingController _urlController = TextEditingController();
   final TextEditingController _tokenController = TextEditingController();
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadToken();
+    _loadConfig();
   }
 
-  Future<void> _loadToken() async {
+  Future<void> _loadConfig() async {
+    final url = await TursoConfig.getDatabaseUrl();
     final token = await TursoConfig.getAuthToken();
     setState(() {
+      _urlController.text = url;
       _tokenController.text = token;
       _isLoading = false;
     });
@@ -29,6 +32,7 @@ class _CloudSettingsSheetState extends State<CloudSettingsSheet> {
 
   @override
   void dispose() {
+    _urlController.dispose();
     _tokenController.dispose();
     super.dispose();
   }
@@ -85,17 +89,34 @@ class _CloudSettingsSheetState extends State<CloudSettingsSheet> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
                 Text(
-                  TursoConfig.databaseUrl.isNotEmpty
-                      ? 'Database: ${TursoConfig.databaseUrl}'
-                      : 'Database: Belum dikonfigurasi (.env)',
+                  'Masukkan Database URL dan Auth Token Turso Anda. Konfigurasi ini disimpan secara lokal dan aman.',
                   style: TextStyle(
-                    fontSize: 11,
+                    fontSize: 12,
                     color: secondaryTextColor,
                   ),
                 ),
                 const SizedBox(height: 16),
+                TextField(
+                  controller: _urlController,
+                  keyboardType: TextInputType.url,
+                  style: TextStyle(color: primaryTextColor),
+                  decoration: InputDecoration(
+                    labelText: 'Turso Database URL',
+                    labelStyle: TextStyle(color: secondaryTextColor),
+                    hintText: 'https://db-name-org.turso.io',
+                    hintStyle: TextStyle(
+                        color: secondaryTextColor.withValues(alpha: 0.5)),
+                    filled: true,
+                    fillColor: fillBg,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
                 TextField(
                   controller: _tokenController,
                   obscureText: true,
@@ -103,7 +124,7 @@ class _CloudSettingsSheetState extends State<CloudSettingsSheet> {
                   decoration: InputDecoration(
                     labelText: 'Turso Auth Token',
                     labelStyle: TextStyle(color: secondaryTextColor),
-                    hintText: 'Bearer eyJhbGci...',
+                    hintText: 'Bearer eyJhbGci... atau token langsung',
                     hintStyle: TextStyle(
                         color: secondaryTextColor.withValues(alpha: 0.5)),
                     filled: true,
@@ -120,6 +141,7 @@ class _CloudSettingsSheetState extends State<CloudSettingsSheet> {
                   height: 48,
                   child: ElevatedButton(
                     onPressed: () async {
+                      await TursoConfig.setDatabaseUrl(_urlController.text);
                       await TursoConfig.setAuthToken(_tokenController.text);
                       await TursoSyncService.shared.checkConnection();
                       if (context.mounted) {
@@ -133,7 +155,7 @@ class _CloudSettingsSheetState extends State<CloudSettingsSheet> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text('Simpan Konfigurasi Token',
+                    child: const Text('Simpan Konfigurasi Cloud',
                         style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
